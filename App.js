@@ -32,6 +32,7 @@ Ext.define('CustomApp', {
 						context: this.getContext().getDataContext(),
 						autoLoad: true,
 						model: Ext.identityFn('UserStory'),
+						//model: Ext.identityFn('Defect'),
 						fetch: ['FormattedID', 'Name', 'Owner', 'Description', 'PlanEstimate'],
 						limit: (scope.getRecord()) ? 200 : 50,
 						listeners: {
