@@ -17,10 +17,13 @@
             '<span class="planestimate">{[this.getEstimate(values)]}</span>' +
             '</div></tpl>', {
                 getOwnerImage: function(values) {
-                    return values.Owner && ('<img src="' + Rally.util.User.getProfileImageUrl(40,values.Owner._ref) + '"/>') || '';
+                    //return values.Owner && ('<img src="' + Rally.util.User.getProfileImageUrl(40,values.Owner._ref) + '"/>') || '';
+                    return '';
                 },
                 getOwnerName: function(values) {
-                    return values.Owner && values.Owner._refObjectName || 'No Owner';
+                    //return values.Owner && values.Owner._refObjectName || 'No Owner';
+                    //return 'YOLO';
+                    return values.mingus;
                 },
                 getParentID: function(values) {
                     return values.WorkProduct && (':' + values.WorkProduct.FormattedID) || '';
@@ -33,4 +36,3 @@
         )
     });
 })();
-

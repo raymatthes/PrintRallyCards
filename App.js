@@ -31,10 +31,10 @@ Ext.define('CustomApp', {
 						context: this.getContext().getDataContext(),
 						autoLoad: true,
 						models: ['User Story', 'Defect'],
-						fetch: ['FormattedID', 'Name', 'Owner', 'Description', 'PlanEstimate'],
+						fetch: ['FormattedID', 'Name', 'Owner', 'Description', 'PlanEstimate', 'Tasks'],
 						limit: (scope.getRecord()) ? 200 : 50,
 						listeners: {
-								load: this._onStoriesLoaded,
+								load: this._doMore,
 								scope: this
 						},
 						filters: [
@@ -43,14 +43,54 @@ Ext.define('CustomApp', {
 				});
 		},
 
+        _doMore: function(store, records) {
+
+            _.each(records, function(record, idx) {
+
+                record.getCollection('Tasks').load({
+                    fetch: ['FormattedID', 'Name', 'State', 'Owner'],
+                    callback: function(taskRecords, operation, success) {
+
+                        var names = Ext.Array.map(taskRecords, function(task) {
+                            //console.log(task.get('FormattedID') + ' - ' + task.get('Name') + ': ' + task.get('State'));
+                            return task.get('Owner')._refObjectName;
+                        }, this);
+
+                        var unique = Ext.Array.unique(names);
+                        var sorted = Ext.Array.sort(unique);
+                        var sumbee = '';
+                        Ext.Array.each(sorted, function(value) {
+                            sumbee += (sumbee ? ', ' + value : value);
+                        });
+
+                        record.data.mingus = sumbee;
+
+                        //console.log(record.mingus);
+                    },
+                    scope: this
+                });
+
+            }, this);
+
+            setTimeout(function(target, myStore, myRecords) {
+                target._onStoriesLoaded(myStore, myRecords);
+            }, 5000, this, store, records)
+
+        },
+
 		_onStoriesLoaded: function(store, records) {
 				var printCardHtml = '';
+
 				_.each(records, function(record, idx) {
-						printCardHtml += Ext.create('Rally.apps.printcards.PrintCard').tpl.apply(record.data);
-						if (idx%4 === 3) {
-								printCardHtml += '<div class="pb"></div>';
-						}
+
+                    console.log(record.data.mingus);
+
+					printCardHtml += Ext.create('Rally.apps.printcards.PrintCard').tpl.apply(record.data);
+					if (idx%4 === 3) {
+							printCardHtml += '<div class="pb"></div>';
+					}
 				}, this);
+
 				Ext.DomHelper.insertHtml('beforeEnd', this.down('#cards').getEl().dom, printCardHtml);
 
 				if(Rally.BrowserTest) {
