@@ -10,9 +10,8 @@ Ext.define('CustomApp', {
 		plugins: [{
 				ptype: 'rallyappprinting'
 		}],
-		helpId: 241,
 		scopeType: 'iteration',
-		autoScroll: false,
+		autoScroll: true,
 
     launch: function() {
 			this.add({
