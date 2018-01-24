@@ -72,7 +72,7 @@ Ext.define('CustomApp', {
 
             setTimeout(function(target, myStore, myRecords) {
                 target._onStoriesLoaded(myStore, myRecords);
-            }, 5000, this, store, records);
+            }, 3000, this, store, records);
 
         },
 
