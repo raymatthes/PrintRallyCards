@@ -58,14 +58,12 @@ Ext.define('CustomApp', {
 
                         var unique = Ext.Array.unique(names);
                         var sorted = Ext.Array.sort(unique);
-                        var sumbee = '';
+                        var storyTeam = '';
                         Ext.Array.each(sorted, function(value) {
-                            sumbee += (sumbee ? ', ' + value : value);
+                            storyTeam += (storyTeam ? ', ' + value : value);
                         });
 
-                        record.data.mingus = sumbee;
-
-                        //console.log(record.mingus);
+                        record.data.storyTeam = storyTeam;
                     },
                     scope: this
                 });
@@ -74,7 +72,7 @@ Ext.define('CustomApp', {
 
             setTimeout(function(target, myStore, myRecords) {
                 target._onStoriesLoaded(myStore, myRecords);
-            }, 5000, this, store, records)
+            }, 5000, this, store, records);
 
         },
 
@@ -82,9 +80,6 @@ Ext.define('CustomApp', {
 				var printCardHtml = '';
 
 				_.each(records, function(record, idx) {
-
-                    console.log(record.data.mingus);
-
 					printCardHtml += Ext.create('Rally.apps.printcards.PrintCard').tpl.apply(record.data);
 					if (idx%4 === 3) {
 							printCardHtml += '<div class="pb"></div>';

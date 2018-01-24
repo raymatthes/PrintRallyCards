@@ -6,7 +6,7 @@
         alias: 'widget.printcard',
         tpl: Ext.create('Ext.XTemplate', '<tpl><div class="artifact">' +
             '<div class="card-header">' +
-            '<span class="formattedid">{FormattedID}{[this.getParentID(values)]}</span>' +
+            '<span class="formattedid {[this.getCardType(values)]}">{FormattedID}{[this.getParentID(values)]}</span>' +
             '<span class="owner">{[this.getOwnerImage(values)]}</span>' +
             '<span class="ownerText">{[this.getOwnerName(values)]}</span>' +
             '</div>' +
@@ -22,8 +22,7 @@
                 },
                 getOwnerName: function(values) {
                     //return values.Owner && values.Owner._refObjectName || 'No Owner';
-                    //return 'YOLO';
-                    return values.mingus;
+                    return values.storyTeam;
                 },
                 getParentID: function(values) {
                     return values.WorkProduct && (':' + values.WorkProduct.FormattedID) || '';
@@ -31,7 +30,11 @@
                 // Tasks have Estimate(s), Stories have PlanEstimate(s)
                 getEstimate: function(values) {
                     return values.Estimate || values.PlanEstimate || 'None';
+                },
+                getCardType: function(values) {
+                    return (values.FormattedID.startsWith("DE")) ? 'defect' : 'story';
                 }
+
             }
         )
     });

@@ -33,7 +33,7 @@
     display: table-cell;
     height: 40px;
     vertical-align: middle;
-    width: 4.3in;
+    width: 4.6in;
 }
 
 .app .name {
@@ -56,9 +56,18 @@
 
 .app .formattedid {
     float: left;
-    font: 14pt / 1.26 NotoSans, Helvetica, Arial;
+    font: 48pt NotoSans, Helvetica, Arial;
     margin-left: 0.25em;
     margin-top: 0.3em;
+    font-weight: bold;
+}
+
+.app .story {
+    color: black;
+}
+
+.app .defect {
+    color: red;
 }
 
 .app .planestimate {
@@ -70,7 +79,7 @@
 .app .content {
     height: 2.4in;
     overflow: hidden;
-    width: 4.3in;
+    width: 4.6in;
     color: black;
     padding-left: 4px;
     padding-right: 8px;
@@ -94,7 +103,7 @@
     margin: 0.1in 0.1in 0.1in 0.1in;
     position: relative;
     overflow: hidden;
-    width: 4.3in;
+    width: 4.6in;
 }
 
 /* Set app size when printing
@@ -116,4 +125,3 @@
         clear: both;
     }
 }
-
