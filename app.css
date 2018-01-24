@@ -110,7 +110,7 @@
 /* Set overflow to hidden on app so page breaks
 /*actually work when printing on Chrome and Safari */
 .print-page .app {
-    width: 920px !important;
+    width: 1000px !important;
     height: 100% !important;
     overflow: hidden !important;
 }
