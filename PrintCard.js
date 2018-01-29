@@ -32,7 +32,13 @@
                     return values.Estimate || values.PlanEstimate || 'None';
                 },
                 getCardType: function(values) {
-                    return (values.FormattedID.startsWith("DE")) ? 'defect' : 'story';
+						  var result = 'story';
+                    if (values.FormattedID.startsWith("DE")) {
+							  result = 'defect';
+						  } else if (values.Name.toLowerCase().includes('spike')) {
+							  result = 'spike'
+						  }
+						  return result;
                 }
 
             }

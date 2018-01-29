@@ -41,7 +41,13 @@
                     return values.Estimate || values.PlanEstimate || 'None';
                 },
                 getCardType: function(values) {
-                    return (values.FormattedID.startsWith("DE")) ? 'defect' : 'story';
+						  var result = 'story';
+                    if (values.FormattedID.startsWith("DE")) {
+							  result = 'defect';
+						  } else if (values.Name.toLowerCase().includes('spike')) {
+							  result = 'spike'
+						  }
+						  return result;
                 }
 
             }
@@ -195,7 +201,7 @@
   display: table-cell;
   height: 40px;
   vertical-align: middle;
-  width: 4.6in;
+  width: 5.0in;
 }
 .app .name {
   font: 28px ProximaNovaBold, Helvetica, Arial;
@@ -225,6 +231,9 @@
 .app .defect {
   color: red;
 }
+.app .spike {
+  color: green;
+}
 .app .planestimate {
   bottom: 0.5em;
   position: absolute;
@@ -233,7 +242,7 @@
 .app .content {
   height: 2.4in;
   overflow: hidden;
-  width: 4.6in;
+  width: 5.0in;
   color: black;
   padding-left: 4px;
   padding-right: 8px;
@@ -254,13 +263,13 @@
   margin: 0.1in 0.1in 0.1in 0.1in;
   position: relative;
   overflow: hidden;
-  width: 4.6in;
+  width: 5.0in;
 }
 /* Set app size when printing
 /* Set overflow to hidden on app so page breaks
 /*actually work when printing on Chrome and Safari */
 .print-page .app {
-  width: 1000px !important;
+  width: 1100px !important;
   height: 100% !important;
   overflow: hidden !important;
 }
