@@ -4,8 +4,9 @@ Ext.define('CustomApp', {
 
     requires: [
         'Rally.data.wsapi.Store',
+        'Rally.data.wsapi.artifact.Store',
         'Rally.apps.printcards.PrintCard',
-        'Rally.app.plugin.Print'
+        'Rally.app.plugin.Print',
     ],
     plugins: [{
         ptype: 'rallyappprinting'
@@ -27,60 +28,73 @@ Ext.define('CustomApp', {
     },
 
     _loadStories: function(scope) {
-        Ext.create('Rally.data.wsapi.artifact.Store', {
+        var storyStore = Ext.create('Rally.data.wsapi.artifact.Store', {
             context: this.getContext().getDataContext(),
-            autoLoad: true,
             models: ['User Story', 'Defect'],
             fetch: ['FormattedID', 'Name', 'Owner', 'Description', 'PlanEstimate', 'Tasks'],
             limit: (scope.getRecord()) ? 200 : 50,
-            listeners: {
-                load: this._doMore,
-                scope: this
-            },
-            filters: [
-                scope.getQueryFilter()
-            ]
+            filters: [scope.getQueryFilter()]
+        });
+
+        storyStore.load().then({
+            success: this._loadTasks,
+            scope: this
+        }).then({
+            success: this._moveAlong.bind(this, storyStore),
+            scope: this
         });
     },
 
-    _doMore: function(store, records) {
-
-        _.each(records, function(record, idx) {
-
-            record.getCollection('Tasks').load({
-                fetch: ['FormattedID', 'Name', 'State', 'Owner'],
-                callback: function(taskRecords, operation, success) {
-
-                    var names = Ext.Array.map(taskRecords, function(task) {
-                        //console.log(task.get('FormattedID') + ' - ' + task.get('Name') + ': ' + task.get('State'));
-                        return task.get('Owner')._refObjectName;
-                    }, this);
-
-                    var unique = Ext.Array.unique(names);
-                    var sorted = Ext.Array.sort(unique);
-                    var storyTeam = '';
-                    Ext.Array.each(sorted, function(value) {
-                        storyTeam += (storyTeam ? ', ' + value : value);
-                    });
-
-                    record.data.storyTeam = storyTeam;
-                },
-                scope: this
-            });
-
-        }, this);
-
-        setTimeout(function(target, myStore, myRecords) {
-            target._onStoriesLoaded(myStore, myRecords);
-        }, 3000, this, store, records);
-
+    _loadTasks: function(stories) {
+        var promises = [];
+        _.each(stories, function(story) {
+            var tasks = story.get('Tasks');
+            if (tasks.Count > 0) {
+                tasks.store = story.getCollection('Tasks');
+                var taskLoad = tasks.store.load({
+                    fetch: ['FormattedID', 'Name', 'State', 'Owner']
+                });
+                promises.push(taskLoad);
+            }
+        });
+        return Deft.Promise.all(promises);
     },
 
-    _onStoriesLoaded: function(store, records) {
-        var printCardHtml = '';
+    _moveAlong: function(storyStore) {
+        this._assembleStoryTeams(storyStore);
+        this._onStoriesLoaded(storyStore);
+    },
 
-        _.each(records, function(record, idx) {
-            printCardHtml += Ext.create('Rally.apps.printcards.PrintCard').tpl.apply(record.data);
+    _assembleStoryTeams: function(storyStore) {
+        _.each(storyStore.data.items, function(story) {
+            var tasksStore = story.get('Tasks').store;
+
+            story.data.storyTeam = (tasksStore) ?
+                this._getStoryTeam(tasksStore.data.items) :
+                '';
+        }, this);
+    },
+
+    _getStoryTeam: function(tasks) {
+        var names = _.map(tasks, function(task) {
+            return task.get('Owner')._refObjectName;
+        });
+        var unique = _.unique(names);
+        var sorted = Ext.Array.sort(unique);
+
+        var storyTeam = _.reduce(sorted, function(accumulator, value) {
+            return accumulator + ', ' + value;
+        });
+
+        return storyTeam;
+    },
+
+    _onStoriesLoaded: function(storyStore) {
+        var printCardHtml = '';
+        var stories = storyStore.data.items;
+
+        _.each(stories, function(story, idx) {
+            printCardHtml += Ext.create('Rally.apps.printcards.PrintCard').tpl.apply(story.data);
             if (idx % 4 === 3) {
                 printCardHtml += '<div class="pb"></div>';
             }
