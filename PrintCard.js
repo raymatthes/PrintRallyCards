@@ -36,7 +36,7 @@
                     if (values.FormattedID.startsWith("DE")) {
                         result = 'defect';
                     } else if (values.Name.toLowerCase().includes('spike')) {
-                        result = 'spike'
+                        result = 'spike';
                     }
                     return result;
                 }

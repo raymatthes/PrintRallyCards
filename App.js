@@ -77,7 +77,8 @@ Ext.define('CustomApp', {
 
     _getStoryTeam: function(tasks) {
         var names = _.map(tasks, function(task) {
-            return task.get('Owner')._refObjectName;
+            var owner = task.get('Owner');
+            return owner ? owner._refObjectName : 'No Owner';
         });
         var unique = _.unique(names);
         var sorted = Ext.Array.sort(unique);
